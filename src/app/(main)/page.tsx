@@ -178,26 +178,24 @@ function FloatingShapes({ variant }: { variant: "hero" | "skills" | "experience"
 // Section Header Component
 function SectionHeader({ title, subtitle, icon }: { title: string; subtitle?: string; icon: string }) {
   return (
-    <Column gap="8" marginBottom="32">
-      <Row gap="12" vertical="center">
-        <Flex
-          padding="12"
-          radius="l"
-          background="brand-weak"
-          horizontal="center"
-          vertical="center"
-        >
-          <Icon name={icon} size="m" onBackground="brand-strong" />
-        </Flex>
-        <Column gap="4">
-          <Heading variant="heading-strong-xl">{title}</Heading>
-          {subtitle && (
-            <Text variant="body-default-s" onBackground="neutral-weak">
-              {subtitle}
-            </Text>
-          )}
-        </Column>
-      </Row>
+    <Column gap="16" marginBottom="32" horizontal="center" fillWidth>
+      <Flex
+        padding="16"
+        radius="full"
+        background="brand-weak"
+        horizontal="center"
+        vertical="center"
+      >
+        <Icon name={icon} size="l" onBackground="brand-strong" />
+      </Flex>
+      <Column gap="8" horizontal="center" align="center">
+        <Heading variant="heading-strong-xl" align="center">{title}</Heading>
+        {subtitle && (
+          <Text variant="body-default-m" onBackground="neutral-weak" align="center">
+            {subtitle}
+          </Text>
+        )}
+      </Column>
     </Column>
   );
 }
@@ -216,11 +214,11 @@ function SkillCategory({ title, skills, delay }: { title: string; skills: typeof
 
   return (
     <RevealFx translateY={4} delay={delay}>
-      <Column gap="12">
-        <Text variant="label-strong-s" onBackground="neutral-medium">
+      <Column gap="16" horizontal="center" fillWidth>
+        <Badge background="neutral-alpha-weak" textVariant="label-strong-s">
           {title}
-        </Text>
-        <Flex gap="8" wrap>
+        </Badge>
+        <Flex gap="12" wrap horizontal="center">
           {skills.map((skill) => (
             <Tag
               key={skill.name}
@@ -330,37 +328,41 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <RevealFx translateY={8} delay={0.5}>
-            <Flex gap="16" wrap horizontal="center">
-              <Button
-                href={portfolioData.behance}
-                prefixIcon="behance"
-                variant="primary"
-                size="l"
-                arrowIcon
-              >
-                View Portfolio
-              </Button>
-              <Button
-                href={`mailto:${portfolioData.email}`}
-                prefixIcon="envelope"
-                variant="secondary"
-                size="l"
-              >
-                Get In Touch
-              </Button>
-            </Flex>
+            <Column horizontal="center" fillWidth>
+              <Flex gap="16" wrap horizontal="center">
+                <Button
+                  href={portfolioData.behance}
+                  prefixIcon="behance"
+                  variant="primary"
+                  size="l"
+                  arrowIcon
+                >
+                  View Portfolio
+                </Button>
+                <Button
+                  href={`mailto:${portfolioData.email}`}
+                  prefixIcon="envelope"
+                  variant="secondary"
+                  size="l"
+                >
+                  Get In Touch
+                </Button>
+              </Flex>
+            </Column>
           </RevealFx>
 
           {/* Scroll Indicator */}
           <RevealFx translateY={8} delay={0.6}>
-            <Button
-              href="#skills"
-              variant="tertiary"
-              suffixIcon="arrowDown"
-              size="s"
-            >
-              Scroll to explore
-            </Button>
+            <Column horizontal="center" fillWidth>
+              <Button
+                href="#skills"
+                variant="tertiary"
+                suffixIcon="arrowDown"
+                size="s"
+              >
+                Scroll to explore
+              </Button>
+            </Column>
           </RevealFx>
         </Column>
       </Column>
@@ -514,27 +516,25 @@ export default function Home() {
             />
           </RevealFx>
 
-          <Flex gap="16" wrap fillWidth>
+          <Row gap="20" wrap horizontal="center" fillWidth>
             {portfolioData.education.map((edu, index) => (
-              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1} style={{ flex: "1 1 280px", minWidth: 250 }}>
+              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1} style={{ flex: "1 1 300px", maxWidth: 380 }}>
                 <Card
-                  padding="20"
+                  padding="24"
                   radius="xl"
                   fillWidth
                   className="hover-card"
                   background="surface"
                   style={{ height: "100%" }}
                 >
-                  <Column gap="16" fillWidth>
-                    <Row gap="12" vertical="center">
-                      <Text style={{ fontSize: 32 }}>{edu.icon}</Text>
-                      <Badge background="brand-weak" textVariant="label-strong-xs">
+                  <Column gap="16" fillWidth horizontal="center">
+                    <Text style={{ fontSize: 48 }}>{edu.icon}</Text>
+                    <Column gap="8" horizontal="center" align="center">
+                      <Badge background="brand-weak" textVariant="label-strong-s">
                         {edu.period}
                       </Badge>
-                    </Row>
-                    <Column gap="8">
-                      <Heading variant="heading-strong-m">{edu.degree}</Heading>
-                      <Text variant="body-default-s" onBackground="neutral-weak">
+                      <Heading variant="heading-strong-m" align="center">{edu.degree}</Heading>
+                      <Text variant="body-default-s" onBackground="neutral-weak" align="center">
                         {edu.institution}
                       </Text>
                     </Column>
@@ -542,7 +542,7 @@ export default function Home() {
                 </Card>
               </RevealFx>
             ))}
-          </Flex>
+          </Row>
         </Column>
       </Column>
 
@@ -566,29 +566,29 @@ export default function Home() {
             />
           </RevealFx>
 
-          <Flex gap="16" wrap horizontal="center" fillWidth>
+          <Row gap="20" wrap horizontal="center" fillWidth>
             {portfolioData.languages.map((lang, index) => (
-              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1}>
+              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1} style={{ flex: "1 1 auto", maxWidth: 200 }}>
                 <Card
-                  padding="20"
+                  padding="24"
                   radius="xl"
                   className="hover-card language-card"
                   background="surface"
-                  style={{ minWidth: 140 }}
+                  fillWidth
                 >
-                  <Column gap="12" horizontal="center" align="center">
-                    <Text style={{ fontSize: 40 }}>{lang.flag}</Text>
-                    <Column gap="4" horizontal="center" align="center">
-                      <Text variant="heading-strong-m">{lang.name}</Text>
-                      <Badge background="neutral-weak" textVariant="label-default-xs">
+                  <Row gap="16" vertical="center" horizontal="center">
+                    <Text style={{ fontSize: 48 }}>{lang.flag}</Text>
+                    <Column gap="4">
+                      <Text variant="heading-strong-l">{lang.name}</Text>
+                      <Badge background="brand-weak" textVariant="label-default-s">
                         {lang.level}
                       </Badge>
                     </Column>
-                  </Column>
+                  </Row>
                 </Card>
               </RevealFx>
             ))}
-          </Flex>
+          </Row>
         </Column>
       </Column>
 
@@ -632,33 +632,35 @@ export default function Home() {
                 </Text>
               </Column>
 
-              <Flex gap="16" wrap horizontal="center">
-                <Button
-                  href={`mailto:${portfolioData.email}`}
-                  prefixIcon="envelope"
-                  variant="primary"
-                  size="l"
-                >
-                  Email Me
-                </Button>
-                <Button
-                  href={`tel:${portfolioData.phone}`}
-                  prefixIcon="phone"
-                  variant="secondary"
-                  size="l"
-                >
-                  Call Me
-                </Button>
-                <Button
-                  href={portfolioData.behance}
-                  prefixIcon="behance"
-                  variant="secondary"
-                  size="l"
-                  arrowIcon
-                >
-                  Behance
-                </Button>
-              </Flex>
+              <Column horizontal="center" fillWidth>
+                <Flex gap="16" wrap horizontal="center">
+                  <Button
+                    href={`mailto:${portfolioData.email}`}
+                    prefixIcon="envelope"
+                    variant="primary"
+                    size="l"
+                  >
+                    Email Me
+                  </Button>
+                  <Button
+                    href={`tel:${portfolioData.phone}`}
+                    prefixIcon="phone"
+                    variant="secondary"
+                    size="l"
+                  >
+                    Call Me
+                  </Button>
+                  <Button
+                    href={portfolioData.behance}
+                    prefixIcon="behance"
+                    variant="secondary"
+                    size="l"
+                    arrowIcon
+                  >
+                    Behance
+                  </Button>
+                </Flex>
+              </Column>
             </Column>
           </RevealFx>
         </Column>
