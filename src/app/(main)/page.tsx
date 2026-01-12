@@ -1,694 +1,279 @@
 "use client";
 
-import {
-  Heading,
-  Text,
-  Button,
-  Column,
-  Row,
-  Badge,
-  Icon,
-  Tag,
-  Flex,
-  Avatar,
-  Card,
-  Line,
-  LetterFx,
-  RevealFx,
-} from "@once-ui-system/core";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import "@/app/futuristic.css";
+import { portfolioContent } from "@/data/mock-content";
 
-// Portfolio data
-const portfolioData = {
-  name: "Shilpa Paira",
-  title: "Graphics Designer | UI/UX Designer",
-  location: "Delhi, India",
-  email: "shilpapaira84@gmail.com",
-  phone: "+91 8709208262",
-  behance: "https://www.behance.net/shilpapaira1",
-  profileImage: "/images/profile.jpg",
+// Dynamic import for 3D Scene to avoid SSR issues
+const Scene = dynamic(() => import("@/components/3d/Scene"), { 
+    ssr: false,
+    loading: () => <div className="fixed inset-0 bg-black z-[-10]" />
+});
 
-  about: `Innovative and motivated Graphic & UI/UX Designer with a strong passion for visual storytelling and brand communication. Experienced in creating social media campaigns, billboards, and marketing materials that combine creativity with functionality. Dedicated to producing engaging, user-friendly designs that enhance brand presence across digital and print platforms.`,
-
-  skills: [
-    { name: "Adobe Photoshop", category: "design" },
-    { name: "Adobe Illustrator", category: "design" },
-    { name: "Procreate", category: "design" },
-    { name: "Canva", category: "design" },
-    { name: "Figma", category: "ui" },
-    { name: "Adobe InDesign", category: "design" },
-    { name: "Adobe XD", category: "ui" },
-    { name: "Cap Cut", category: "video" },
-    { name: "Autodesk Sketchbook", category: "design" },
-    { name: "Illustration", category: "skill" },
-    { name: "Mixed Media", category: "skill" },
-    { name: "Editing", category: "video" },
-    { name: "MS PowerPoint", category: "office" },
-    { name: "MS Excel", category: "office" },
-    { name: "MS Word", category: "office" },
-  ],
-
-  experience: [
-    {
-      company: "Sinfolix Technology",
-      period: "June 2024 - September 2024",
-      role: "Graphic Designer Intern",
-      achievements: [
-        "Designed and developed engaging social media creatives, posters, and digital marketing graphics that aligned with brand identity",
-        "Created impactful billboard designs and print-ready advertising materials for campaigns",
-        "Collaborated with the design team to conceptualize and execute innovative visual ideas for client projects",
-        "Gained hands-on experience in graphic design tools (Photoshop, Illustrator, Canva) and applied best practices in branding and visual communication",
-        "Ensured all designs maintained consistency, clarity, and professional quality across digital and print platforms",
-      ],
-    },
-  ],
-
-  education: [
-    {
-      degree: "Bachelors of Visual Arts",
-      institution: "Bharati Vidyapeeth College of Visual Arts, Pune",
-      period: "2021 - 2025",
-      icon: "🎨",
-    },
-    {
-      degree: "Senior Secondary School Examination",
-      institution: "Baharagora College, Baharagora, Jharkhand",
-      period: "2016 - 2018",
-      icon: "📚",
-    },
-    {
-      degree: "Secondary School Examination",
-      institution: "H.S. Bhawani Devi Bankati, East Singhbhum, Jharkhand",
-      period: "2015 - 2016",
-      icon: "📖",
-    },
-  ],
-
-  languages: [
-    { name: "English", level: "Conversational", flag: "🇬🇧" },
-    { name: "Hindi", level: "Native", flag: "🇮🇳" },
-    { name: "Bengali", level: "Native", flag: "🇧🇩" },
-  ],
-};
-
-// Floating shapes component for background animations
-function FloatingShapes({ variant }: { variant: "hero" | "skills" | "experience" | "education" | "contact" | "languages" }) {
-  const shapes: Record<string, React.ReactNode> = {
-    hero: (
-      <>
-        {/* Large decorative shapes */}
-        <div className="floating-shape circle float-1" style={{ width: 140, height: 140, top: "8%", left: "3%" }} />
-        <div className="floating-shape square float-2" style={{ width: 90, height: 90, top: "15%", right: "8%" }} />
-        <div className="floating-shape blob float-7" style={{ width: 180, height: 180, bottom: "20%", left: "5%" }} />
-        <div className="floating-shape circle float-4" style={{ width: 110, height: 110, bottom: "15%", right: "3%" }} />
-        
-        {/* Medium shapes */}
-        <div className="floating-shape ring float-3" style={{ width: 80, height: 80, top: "40%", left: "8%" }} />
-        <div className="floating-shape square float-6" style={{ width: 60, height: 60, top: "60%", right: "12%" }} />
-        <div className="floating-shape gradient-orb float-8" style={{ width: 200, height: 200, top: "30%", right: "20%" }} />
-        
-        {/* Small accent shapes */}
-        <div className="floating-shape circle float-5" style={{ width: 40, height: 40, top: "25%", left: "25%" }} />
-        <div className="floating-shape star" style={{ top: "20%", left: "40%" }} />
-        <div className="floating-shape star" style={{ top: "45%", right: "25%", animationDelay: "0.5s" }} />
-        <div className="floating-shape star" style={{ bottom: "30%", left: "35%", animationDelay: "1s" }} />
-        <div className="floating-shape star" style={{ top: "70%", right: "40%", animationDelay: "1.5s" }} />
-      </>
-    ),
-    skills: (
-      <>
-        <div className="floating-shape circle float-2" style={{ width: 100, height: 100, top: "5%", right: "5%" }} />
-        <div className="floating-shape square float-3" style={{ width: 70, height: 70, bottom: "15%", left: "3%" }} />
-        <div className="floating-shape blob float-6" style={{ width: 120, height: 120, top: "50%", right: "2%" }} />
-        <div className="floating-shape ring float-4" style={{ width: 60, height: 60, bottom: "40%", left: "8%" }} />
-        <div className="floating-shape gradient-orb float-1" style={{ width: 150, height: 150, top: "20%", left: "10%" }} />
-        <div className="floating-shape star" style={{ top: "30%", right: "20%" }} />
-        <div className="floating-shape star" style={{ bottom: "25%", left: "25%", animationDelay: "0.7s" }} />
-        <div className="mesh-gradient" />
-      </>
-    ),
-    experience: (
-      <>
-        <div className="floating-shape square float-1" style={{ width: 90, height: 90, top: "10%", left: "2%" }} />
-        <div className="floating-shape circle float-4" style={{ width: 110, height: 110, bottom: "8%", right: "3%" }} />
-        <div className="floating-shape blob float-7" style={{ width: 140, height: 140, top: "40%", right: "5%" }} />
-        <div className="floating-shape ring float-2" style={{ width: 70, height: 70, top: "60%", left: "5%" }} />
-        <div className="floating-shape gradient-orb float-3" style={{ width: 180, height: 180, bottom: "30%", left: "15%" }} />
-        <div className="floating-shape star" style={{ top: "25%", right: "30%" }} />
-        <div className="floating-shape star" style={{ bottom: "35%", left: "40%", animationDelay: "0.8s" }} />
-      </>
-    ),
-    education: (
-      <>
-        <div className="floating-shape circle float-3" style={{ width: 80, height: 80, top: "15%", left: "4%" }} />
-        <div className="floating-shape square float-2" style={{ width: 65, height: 65, bottom: "20%", right: "6%" }} />
-        <div className="floating-shape blob float-8" style={{ width: 100, height: 100, top: "50%", right: "3%" }} />
-        <div className="floating-shape ring float-1" style={{ width: 55, height: 55, bottom: "50%", left: "8%" }} />
-        <div className="floating-shape gradient-orb float-4" style={{ width: 130, height: 130, top: "30%", right: "15%" }} />
-        <div className="floating-shape star" style={{ top: "20%", right: "25%" }} />
-        <div className="floating-shape star" style={{ bottom: "30%", left: "30%", animationDelay: "0.6s" }} />
-        <div className="mesh-gradient" />
-      </>
-    ),
-    languages: (
-      <>
-        <div className="floating-shape circle float-2" style={{ width: 70, height: 70, top: "20%", right: "8%" }} />
-        <div className="floating-shape square float-5" style={{ width: 50, height: 50, bottom: "30%", left: "5%" }} />
-        <div className="floating-shape ring float-3" style={{ width: 45, height: 45, top: "40%", left: "10%" }} />
-        <div className="floating-shape gradient-orb float-6" style={{ width: 100, height: 100, bottom: "20%", right: "15%" }} />
-        <div className="floating-shape star" style={{ top: "30%", left: "35%" }} />
-      </>
-    ),
-    contact: (
-      <>
-        <div className="floating-shape circle float-1" style={{ width: 120, height: 120, top: "8%", left: "8%" }} />
-        <div className="floating-shape square float-4" style={{ width: 90, height: 90, bottom: "12%", right: "8%" }} />
-        <div className="floating-shape blob float-7" style={{ width: 150, height: 150, top: "30%", right: "5%" }} />
-        <div className="floating-shape ring float-2" style={{ width: 80, height: 80, bottom: "40%", left: "5%" }} />
-        <div className="floating-shape gradient-orb float-3" style={{ width: 200, height: 200, top: "20%", left: "20%" }} />
-        <div className="floating-shape star" style={{ top: "15%", right: "30%" }} />
-        <div className="floating-shape star" style={{ bottom: "25%", left: "40%", animationDelay: "0.9s" }} />
-        <div className="floating-shape star" style={{ top: "60%", right: "25%", animationDelay: "0.4s" }} />
-      </>
-    ),
-  };
-
-  return <>{shapes[variant]}</>;
+function Section({ children, className = "", id = "" }: { children: React.ReactNode; className?: string; id?: string }) {
+    return (
+        <section id={id} className={`min-h-screen flex flex-col justify-center items-center p-8 relative ${className}`}>
+            {children}
+        </section>
+    );
 }
 
-// Section Header Component
-function SectionHeader({ title, subtitle, icon }: { title: string; subtitle?: string; icon: string }) {
-  return (
-    <Column gap="16" marginBottom="32" horizontal="center" fillWidth>
-      <Flex
-        padding="16"
-        radius="full"
-        background="brand-weak"
-        horizontal="center"
-        vertical="center"
-      >
-        <Icon name={icon} size="l" onBackground="brand-strong" />
-      </Flex>
-      <Column gap="8" horizontal="center" align="center">
-        <Heading variant="heading-strong-xl" align="center">{title}</Heading>
-        {subtitle && (
-          <Text variant="body-default-m" onBackground="neutral-weak" align="center">
-            {subtitle}
-          </Text>
-        )}
-      </Column>
-    </Column>
-  );
-}
-
-// Skill Category Component
-function SkillCategory({ title, skills, delay }: { title: string; skills: typeof portfolioData.skills; delay: number }) {
-  const getVariant = (category: string): "brand" | "accent" | "warning" | "success" | "neutral" => {
-    switch (category) {
-      case "design": return "brand";
-      case "ui": return "accent";
-      case "video": return "warning";
-      case "skill": return "success";
-      default: return "neutral";
-    }
-  };
-
-  return (
-    <RevealFx translateY={4} delay={delay}>
-      <Column gap="16" horizontal="center" fillWidth>
-        <Badge background="neutral-alpha-weak" textVariant="label-strong-s">
-          {title}
-        </Badge>
-        <Flex gap="12" wrap horizontal="center">
-          {skills.map((skill) => (
-            <Tag
-              key={skill.name}
-              size="l"
-              variant={getVariant(skill.category)}
-              className="skill-tag"
-            >
-              {skill.name}
-            </Tag>
-          ))}
-        </Flex>
-      </Column>
-    </RevealFx>
-  );
+function GlassCard({ children, className = "", delay = 0, hover = true }: { children: React.ReactNode; className?: string; delay?: number; hover?: boolean }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            whileHover={hover ? { scale: 1.02, backgroundColor: "rgba(255,255,255,0.08)" } : {}}
+            transition={{ duration: 0.6, delay, type: "spring", stiffness: 50 }}
+            className={`glass-card p-8 border border-white/5 bg-black/40 backdrop-blur-xl rounded-2xl ${className}`}
+        >
+            {children}
+        </motion.div>
+    );
 }
 
 export default function Home() {
-  return (
-    <Column fillWidth>
-      {/* ==================== HERO SECTION ==================== */}
-      <Column
-        as="section"
-        fillWidth
-        paddingX="m"
-        paddingY="64"
-        style={{ minHeight: "100vh" }}
-        horizontal="center"
-        vertical="center"
-        className="hero-section section-wrapper"
-      >
-        <FloatingShapes variant="hero" />
-        <div className="hero-gradient" />
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
 
-        <Column maxWidth="m" gap="32" horizontal="center" fillWidth style={{ position: "relative", zIndex: 1 }}>
-          {/* Profile Image with Glow - Centered */}
-          <RevealFx translateY={8} delay={0.1}>
-            <Column horizontal="center" fillWidth>
-              <div className="avatar-glow" style={{ borderRadius: "50%", padding: 4, display: "inline-flex" }}>
-                <Avatar src={portfolioData.profileImage} size="xl" />
-              </div>
-            </Column>
-          </RevealFx>
+    const bioRef = useRef<HTMLDivElement>(null);
 
-          {/* Name & Title */}
-          <RevealFx translateY={8} delay={0.2}>
-            <Column gap="12" horizontal="center" align="center" fillWidth>
-              <Heading variant="display-strong-xl" align="center">
-                <LetterFx trigger="instant" speed="medium">
-                  {portfolioData.name}
-                </LetterFx>
-              </Heading>
-              <Text
-                variant="heading-default-l"
-                onBackground="brand-medium"
-                align="center"
-              >
-                {portfolioData.title}
-              </Text>
-            </Column>
-          </RevealFx>
-
-          {/* Contact Badges */}
-          <RevealFx translateY={8} delay={0.3}>
-            <Column gap="8" horizontal="center" fillWidth>
-              <Flex gap="8" wrap horizontal="center">
-                <Badge
-                  icon="mapPin"
-                  textVariant="body-default-s"
-                  background="surface"
-                  border="neutral-alpha-weak"
-                >
-                  {portfolioData.location}
-                </Badge>
-              </Flex>
-              <Flex gap="8" wrap horizontal="center">
-                <Badge
-                  icon="envelope"
-                  textVariant="body-default-s"
-                  background="surface"
-                  border="neutral-alpha-weak"
-                >
-                  {portfolioData.email}
-                </Badge>
-                <Badge
-                  icon="phone"
-                  textVariant="body-default-s"
-                  background="surface"
-                  border="neutral-alpha-weak"
-                >
-                  {portfolioData.phone}
-                </Badge>
-              </Flex>
-            </Column>
-          </RevealFx>
-
-          {/* About Text */}
-          <RevealFx translateY={8} delay={0.4}>
-            <Text
-              variant="body-default-l"
-              onBackground="neutral-weak"
-              align="center"
-              wrap="balance"
-            >
-              {portfolioData.about}
-            </Text>
-          </RevealFx>
-
-          {/* CTA Buttons */}
-          <RevealFx translateY={8} delay={0.5}>
-            <Column horizontal="center" fillWidth>
-              <Flex gap="16" wrap horizontal="center">
-                <Button
-                  href={portfolioData.behance}
-                  prefixIcon="behance"
-                  variant="primary"
-                  size="l"
-                  arrowIcon
-                >
-                  View Portfolio
-                </Button>
-                <Button
-                  href={`mailto:${portfolioData.email}`}
-                  prefixIcon="envelope"
-                  variant="secondary"
-                  size="l"
-                >
-                  Get In Touch
-                </Button>
-              </Flex>
-            </Column>
-          </RevealFx>
-
-          {/* Scroll Indicator */}
-          <RevealFx translateY={8} delay={0.6}>
-            <Column horizontal="center" fillWidth>
-              <Button
-                href="#skills"
-                variant="tertiary"
-                suffixIcon="arrowDown"
-                size="s"
-              >
-                Scroll to explore
-              </Button>
-            </Column>
-          </RevealFx>
-        </Column>
-      </Column>
-
-      {/* ==================== SKILLS SECTION ==================== */}
-      <Column
-        as="section"
-        id="skills"
-        fillWidth
-        paddingX="m"
-        paddingY="48"
-        horizontal="center"
-        className="section-wrapper skills-section-bg"
-        background="surface"
-      >
-        <FloatingShapes variant="skills" />
-        <Column maxWidth="l" fillWidth gap="24" style={{ position: "relative", zIndex: 1 }}>
-          <RevealFx translateY={4} delay={0.1}>
-            <SectionHeader
-              title="Skills & Expertise"
-              subtitle="Tools and technologies I work with"
-              icon="sparkles"
+    return (
+        <SmoothScroll>
+            <Scene />
+            
+            {/* Progress Bar */}
+            <motion.div
+                className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[--neon-blue] to-[--neon-purple] origin-left z-50 mix-blend-screen"
+                style={{ scaleX }}
             />
-          </RevealFx>
 
-          <Column gap="32">
-            <SkillCategory
-              title="DESIGN TOOLS"
-              skills={portfolioData.skills.filter((s) => s.category === "design" || s.category === "ui")}
-              delay={0.2}
-            />
-            <SkillCategory
-              title="CREATIVE SKILLS"
-              skills={portfolioData.skills.filter((s) => s.category === "skill" || s.category === "video")}
-              delay={0.3}
-            />
-            <SkillCategory
-              title="PRODUCTIVITY"
-              skills={portfolioData.skills.filter((s) => s.category === "office")}
-              delay={0.4}
-            />
-          </Column>
-        </Column>
-      </Column>
+            <main className="text-white futuristic-container selection:bg-[--neon-purple] selection:text-white">
+                
+                {/* HERO SECTION */}
+                <Section className="z-10 perspective-[1000px]">
+                    <motion.div
+                        className="text-center z-10 relative"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 2 }}
+                    >
+                        <div className="absolute -inset-20 bg-gradient-to-r from-[--neon-blue] to-[--neon-purple] opacity-10 blur-[100px] rounded-full animate-pulse" />
+                        
+                        <motion.h2 
+                            initial={{ letterSpacing: "1em", opacity: 0 }}
+                            animate={{ letterSpacing: "0.5em", opacity: 1 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="text-[--neon-blue] tracking-[0.5em] mb-6 text-sm md:text-xl uppercase font-bold"
+                        >
+                            {portfolioContent.about.hero.tagline}
+                        </motion.h2>
+                        
+                        <h1 className="hero-title neon-heading mb-6 text-7xl md:text-9xl font-black relative">
+                            {portfolioContent.about.hero.headline.split("").map((char, i) => (
+                                <motion.span
+                                    key={i}
+                                    initial={{ opacity: 0, filter: "blur(10px)", y: 50 }}
+                                    animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                                    transition={{ delay: i * 0.05 + 0.5, duration: 0.8 }}
+                                    className="inline-block hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-t hover:from-white hover:to-transparent transition-all duration-300 cursor-default"
+                                >
+                                    {char === " " ? "\u00A0" : char}
+                                </motion.span>
+                            ))}
+                        </h1>
 
-      {/* ==================== EXPERIENCE SECTION ==================== */}
-      <Column
-        as="section"
-        id="experience"
-        fillWidth
-        paddingX="m"
-        paddingY="48"
-        horizontal="center"
-        className="section-wrapper experience-section-bg"
-      >
-        <FloatingShapes variant="experience" />
-        <Column maxWidth="l" fillWidth gap="24" style={{ position: "relative", zIndex: 1 }}>
-          <RevealFx translateY={4} delay={0.1}>
-            <SectionHeader
-              title="Work Experience"
-              subtitle="My professional journey"
-              icon="briefcase"
-            />
-          </RevealFx>
+                        <motion.h3
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.5, duration: 1 }}
+                            className="text-xl md:text-2xl text-gray-300 font-light tracking-wide max-w-2xl mx-auto leading-relaxed"
+                        >
+                            {portfolioContent.about.hero.subheadline}
+                        </motion.h3>
 
-          <Column gap="24">
-            {portfolioData.experience.map((exp, index) => (
-              <RevealFx key={index} translateY={4} delay={0.2}>
-                <Card
-                  padding="32"
-                  radius="xl"
-                  fillWidth
-                  className="hover-card"
-                  background="surface"
-                >
-                  <Column gap="24">
-                    {/* Header */}
-                    <Row gap="16" vertical="center" wrap>
-                      <Flex
-                        padding="16"
-                        radius="l"
-                        background="brand-weak"
-                        horizontal="center"
-                        vertical="center"
-                      >
-                        <Icon name="briefcase" size="l" onBackground="brand-strong" />
-                      </Flex>
-                      <Column gap="4" style={{ flex: 1 }}>
-                        <Heading variant="heading-strong-l">{exp.company}</Heading>
-                        <Text variant="body-strong-m" onBackground="brand-medium">
-                          {exp.role}
-                        </Text>
-                      </Column>
-                      <Badge background="brand-weak" textVariant="label-strong-s">
-                        {exp.period}
-                      </Badge>
-                    </Row>
+                        <motion.p
+                             initial={{ opacity: 0 }}
+                             animate={{ opacity: 1 }}
+                             transition={{ delay: 2.0, duration: 1 }}
+                             className="mt-8 text-gray-400 max-w-lg mx-auto leading-relaxed"
+                        >
+                            {portfolioContent.about.hero.description}
+                        </motion.p>
+                    </motion.div>
 
-                    {/* Divider */}
-                    <Line background="neutral-alpha-weak" />
+                    <motion.div
+                        animate={{ y: [0, 15, 0] }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        className="absolute bottom-10 opacity-70 flex flex-col items-center gap-2"
+                    >
+                        <span className="text-[10px] uppercase tracking-[0.3em] text-[--neon-blue]">Initialize System</span>
+                        <div className="w-[1px] h-12 bg-gradient-to-b from-[--neon-blue] to-transparent" />
+                    </motion.div>
+                </Section>
 
-                    {/* Achievements */}
-                    <Column gap="16">
-                      <Text variant="label-strong-s" onBackground="neutral-medium">
-                        KEY ACHIEVEMENTS
-                      </Text>
-                      <Column gap="12">
-                        {exp.achievements.map((achievement, i) => (
-                          <Row key={i} gap="12" vertical="start">
-                            <Flex
-                              padding="4"
-                              radius="full"
-                              background="brand-weak"
-                              style={{ marginTop: 6, flexShrink: 0 }}
+                {/* JOURNEY / BIO SECTION */}
+                <Section>
+                    <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                        <div>
+                             <motion.h2 
+                                initial={{ x: -100, opacity: 0 }}
+                                whileInView={{ x: 0, opacity: 1 }}
+                                className="section-title neon-heading text-left mb-8"
                             >
-                              <Icon name="chevronRight" size="xs" onBackground="brand-strong" />
-                            </Flex>
-                            <Text variant="body-default-m" onBackground="neutral-weak">
-                              {achievement}
-                            </Text>
-                          </Row>
-                        ))}
-                      </Column>
-                    </Column>
-                  </Column>
-                </Card>
-              </RevealFx>
-            ))}
-          </Column>
-        </Column>
-      </Column>
+                                The Evolution
+                            </motion.h2>
+                            <div className="space-y-12">
+                                {portfolioContent.about.bio.map((chapter, i) => (
+                                    <div key={i} className="relative pl-8 border-l border-white/10 hover:border-[--neon-purple] transition-colors duration-300 group">
+                                        <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 bg-[--neon-blue] rounded-full group-hover:scale-150 group-hover:shadow-[0_0_10px_var(--neon-blue)] transition-all" />
+                                        <span className="text-xs text-[--neon-purple] font-mono mb-2 block tracking-widest">{chapter.year}</span>
+                                        <h3 className="text-2xl font-bold text-white mb-2">{chapter.title}</h3>
+                                        <p className="text-gray-400 leading-relaxed">{chapter.description}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <GlassCard className="relative h-[500px] flex items-center justify-center overflow-hidden !p-0">
+                             <div className="absolute inset-0 bg-[url('/images/profile.jpg')] bg-cover bg-center opacity-70 grayscale hover:grayscale-0 transition-all duration-700 hover:scale-110" />
+                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                             <div className="absolute bottom-8 left-8">
+                                <h3 className="text-3xl font-bold text-white">Shilpa</h3>
+                                <p className="text-[--neon-blue]">System Architect</p>
+                             </div>
+                        </GlassCard>
+                    </div>
+                </Section>
 
-      {/* ==================== EDUCATION SECTION ==================== */}
-      <Column
-        as="section"
-        id="education"
-        fillWidth
-        paddingX="m"
-        paddingY="48"
-        horizontal="center"
-        className="section-wrapper education-section-bg"
-        background="surface"
-      >
-        <FloatingShapes variant="education" />
-        <Column maxWidth="l" fillWidth gap="24" style={{ position: "relative", zIndex: 1 }}>
-          <RevealFx translateY={4} delay={0.1}>
-            <SectionHeader
-              title="Education"
-              subtitle="My academic background"
-              icon="academic"
-            />
-          </RevealFx>
+                {/* PROJECT STARGATE (Case Studies) */}
+                <Section className="py-24">
+                    <div className="max-w-7xl w-full">
+                        <motion.h2 
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            className="section-title neon-heading text-center mb-20"
+                        >
+                            Select Missions
+                        </motion.h2>
 
-          <Row gap="20" wrap horizontal="center" fillWidth>
-            {portfolioData.education.map((edu, index) => (
-              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1} style={{ flex: "1 1 300px", maxWidth: 380 }}>
-                <Card
-                  padding="24"
-                  radius="xl"
-                  fillWidth
-                  className="hover-card"
-                  background="surface"
-                  style={{ height: "100%" }}
-                >
-                  <Column gap="16" fillWidth horizontal="center">
-                    <Text style={{ fontSize: 48 }}>{edu.icon}</Text>
-                    <Column gap="8" horizontal="center" align="center">
-                      <Badge background="brand-weak" textVariant="label-strong-s">
-                        {edu.period}
-                      </Badge>
-                      <Heading variant="heading-strong-m" align="center">{edu.degree}</Heading>
-                      <Text variant="body-default-s" onBackground="neutral-weak" align="center">
-                        {edu.institution}
-                      </Text>
-                    </Column>
-                  </Column>
-                </Card>
-              </RevealFx>
-            ))}
-          </Row>
-        </Column>
-      </Column>
+                        <div className="space-y-32">
+                            {portfolioContent.caseStudies.map((project, index) => (
+                                <motion.div 
+                                    key={project.id}
+                                    initial={{ opacity: 0, y: 100 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-20%" }}
+                                    transition={{ duration: 0.8 }}
+                                    className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                                >
+                                    {/* Visual Representation (Abstract for now, would be images) */}
+                                    <GlassCard className="w-full md:w-3/5 h-[400px] relative overflow-hidden group !p-0 border-0">
+                                        <div className="absolute inset-0 transition-all duration-500 group-hover:scale-105" 
+                                             style={{ 
+                                                 background: `linear-gradient(135deg, ${project.color}22, black)`,
+                                             }}
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-100 transition-opacity duration-500">
+                                            <span className="text-9xl font-black text-white/5">{index + 1}</span>
+                                        </div>
+                                        {/* Mock UI Elements */}
+                                        <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                             <div className="flex gap-2 mb-4">
+                                                 {project.tags.map(tag => (
+                                                     <span key={tag} className="px-3 py-1 rounded-full border border-white/20 text-xs uppercase bg-black/50 backdrop-blur-md">{tag}</span>
+                                                 ))}
+                                             </div>
+                                        </div>
+                                    </GlassCard>
 
-      {/* ==================== LANGUAGES SECTION ==================== */}
-      <Column
-        as="section"
-        id="languages"
-        fillWidth
-        paddingX="m"
-        paddingY="48"
-        horizontal="center"
-        className="section-wrapper languages-section-bg"
-      >
-        <FloatingShapes variant="languages" />
-        <Column maxWidth="l" fillWidth gap="24" style={{ position: "relative", zIndex: 1 }}>
-          <RevealFx translateY={4} delay={0.1}>
-            <SectionHeader
-              title="Languages"
-              subtitle="Languages I speak"
-              icon="language"
-            />
-          </RevealFx>
+                                    {/* Content Info */}
+                                    <div className="w-full md:w-2/5">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <span className="w-12 h-[1px] bg-white/50" />
+                                            <span className="text-[--neon-blue] text-sm tracking-wider">{project.category} // {project.year}</span>
+                                        </div>
+                                        <h3 className="text-4xl md:text-5xl font-bold mb-6 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[--neon-blue] hover:to-[--neon-purple] transition-all cursor-pointer"
+                                            style={{ textShadow: `0 0 30px ${project.color}44` }}
+                                        >
+                                            {project.title}
+                                        </h3>
+                                        <p className="text-xl text-white mb-8 border-l-2 border-[--neon-purple] pl-4 italic">
+                                            "{project.challenge}"
+                                        </p>
+                                        <div className="space-y-6 text-gray-400">
+                                            <p><strong className="text-white block mb-1 uppercase text-xs tracking-wider">Solution</strong> {project.solution}</p>
+                                            <p><strong className="text-[--neon-green] block mb-1 uppercase text-xs tracking-wider" style={{ color: '#00ff9d' }}>Impact</strong> {project.impact}</p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </Section>
 
-          <Row gap="20" wrap horizontal="center" fillWidth>
-            {portfolioData.languages.map((lang, index) => (
-              <RevealFx key={index} translateY={4} delay={0.2 + index * 0.1} style={{ flex: "1 1 auto", maxWidth: 200 }}>
-                <Card
-                  padding="24"
-                  radius="xl"
-                  className="hover-card language-card"
-                  background="surface"
-                  fillWidth
-                >
-                  <Row gap="16" vertical="center" horizontal="center">
-                    <Text style={{ fontSize: 48 }}>{lang.flag}</Text>
-                    <Column gap="4">
-                      <Text variant="heading-strong-l">{lang.name}</Text>
-                      <Badge background="brand-weak" textVariant="label-default-s">
-                        {lang.level}
-                      </Badge>
-                    </Column>
-                  </Row>
-                </Card>
-              </RevealFx>
-            ))}
-          </Row>
-        </Column>
-      </Column>
+                {/* TESTIMONIALS & STATS */}
+                <Section className="grid-bg">
+                    <div className="max-w-6xl w-full">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-24">
+                            {portfolioContent.stats.map((stat, i) => (
+                                <GlassCard key={i} className="text-center" delay={i * 0.1} hover={false}>
+                                    <div className="text-4xl md:text-5xl font-black text-white mb-2">{stat.value}</div>
+                                    <div className="text-sm text-gray-400 uppercase tracking-widest">{stat.label}</div>
+                                </GlassCard>
+                            ))}
+                        </div>
 
-      {/* ==================== CONTACT SECTION ==================== */}
-      <Column
-        as="section"
-        id="contact"
-        fillWidth
-        paddingX="m"
-        paddingY="48"
-        horizontal="center"
-        className="section-wrapper contact-bg"
-        background="brand-weak"
-      >
-        <FloatingShapes variant="contact" />
-        <Column maxWidth="m" fillWidth gap="24" style={{ position: "relative", zIndex: 1 }}>
-          <RevealFx translateY={4} delay={0.1}>
-            <Column gap="32" horizontal="center" align="center">
-              <Flex
-                padding="20"
-                radius="full"
-                background="brand-medium"
-                horizontal="center"
-                vertical="center"
-              >
-                <Icon name="envelope" size="xl" onBackground="brand-strong" />
-              </Flex>
+                        <h2 className="section-title neon-heading text-center mb-16">Transmissions</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {portfolioContent.testimonials.map((t, i) => (
+                                <GlassCard key={i} delay={0.2 + i * 0.1} className="relative">
+                                    <div className="text-[--neon-purple] text-6xl absolute top-4 left-4 opacity-50">"</div>
+                                    <p className="text-gray-300 relative z-10 mb-6 mt-8 leading-relaxed">
+                                        {t.text}
+                                    </p>
+                                    <div>
+                                        <div className="text-white font-bold">{t.name}</div>
+                                        <div className="text-[--neon-blue] text-sm">{t.role}</div>
+                                    </div>
+                                </GlassCard>
+                            ))}
+                        </div>
+                    </div>
+                </Section>
 
-              <Column gap="16" horizontal="center" align="center">
-                <Heading variant="display-strong-l" align="center">
-                  Let's Create Together
-                </Heading>
-                <Text
-                  variant="body-default-l"
-                  onBackground="neutral-weak"
-                  align="center"
-                  wrap="balance"
-                >
-                  I'm always excited to work on new creative projects. Whether you need stunning graphics,
-                  UI/UX design, or visual branding — let's bring your vision to life!
-                </Text>
-              </Column>
+                {/* FOOTER CTA */}
+                <Section className="min-h-[70vh]">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+                        <div className="w-[800px] h-[800px] border border-white/5 rounded-full animate-[spin_10s_linear_infinite]" />
+                        <div className="w-[600px] h-[600px] border border-white/5 rounded-full absolute animate-[spin_15s_linear_infinite_reverse]" />
+                        <div className="w-[400px] h-[400px] border border-white/10 rounded-full absolute" />
+                    </div>
 
-              <Column horizontal="center" fillWidth>
-                <Flex gap="16" wrap horizontal="center">
-                  <Button
-                    href={`mailto:${portfolioData.email}`}
-                    prefixIcon="envelope"
-                    variant="primary"
-                    size="l"
-                  >
-                    Email Me
-                  </Button>
-                  <Button
-                    href={`tel:${portfolioData.phone}`}
-                    prefixIcon="phone"
-                    variant="secondary"
-                    size="l"
-                  >
-                    Call Me
-                  </Button>
-                  <Button
-                    href={portfolioData.behance}
-                    prefixIcon="behance"
-                    variant="secondary"
-                    size="l"
-                    arrowIcon
-                  >
-                    Behance
-                  </Button>
-                </Flex>
-              </Column>
-            </Column>
-          </RevealFx>
-        </Column>
-      </Column>
-
-      {/* ==================== FOOTER ==================== */}
-      <Column
-        as="footer"
-        fillWidth
-        paddingX="l"
-        paddingY="32"
-        horizontal="center"
-        background="surface"
-      >
-        <Column maxWidth="l" fillWidth>
-          <Row fillWidth horizontal="center" vertical="center" gap="8">
-            <Text variant="body-default-s" onBackground="neutral-weak" align="center">
-              © 2026 Shilpa Paira
-            </Text>
-            <Text variant="body-default-s" onBackground="neutral-weak">
-              •
-            </Text>
-            <Text variant="body-default-s" onBackground="neutral-weak" align="center">
-              Crafted with creativity & passion
-            </Text>
-          </Row>
-        </Column>
-      </Column>
-    </Column>
-  );
+                    <GlassCard className="text-center max-w-3xl py-20 border-[--neon-blue] relative z-10">
+                        <h2 className="text-5xl md:text-7xl font-black neon-heading mb-8">Ready to Initialize?</h2>
+                        <p className="text-xl text-gray-300 mb-12 max-w-xl mx-auto">
+                            The future is not just something we wait for. It's something we build. Let's engineer your next breakthrough.
+                        </p>
+                        <div className="flex flex-col md:flex-row justify-center gap-6">
+                             <a href="mailto:shilpapaira84@gmail.com" className="group relative px-10 py-5 bg-white text-black font-bold text-lg rounded-none clip-path-polygon hover:bg-[--neon-blue] transition-all overflow-hidden">
+                                <span className="relative z-10">SEND TRANSMISSION</span>
+                                <div className="absolute inset-0 bg-[--neon-blue] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                            </a>
+                        </div>
+                        <div className="mt-24 text-xs text-gray-600 font-mono">
+                            SYSTEM STATUS: ONLINE // YEAR: 2126 // DESIGNED BY SHILPA PAIRA
+                        </div>
+                    </GlassCard>
+                </Section>
+            </main>
+        </SmoothScroll>
+    );
 }
